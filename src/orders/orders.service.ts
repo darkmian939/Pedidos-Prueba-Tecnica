@@ -33,7 +33,7 @@ export class OrdersService {
     });
   }
 
-  // ✅ Listar pedidos por usuario
+
   async listOrders(userId: string): Promise<Order[]> {
     return this.prisma.order.findMany({
       where: { userId },
@@ -41,7 +41,7 @@ export class OrdersService {
     });
   }
 
-  // ✅ Actualizar estado del pedido
+
   async updateOrderStatus(orderId: string, status: 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADO'): Promise<Order> {
     return this.prisma.order.update({
       where: { id: orderId },
