@@ -12,13 +12,12 @@ export class OrdersService {
       include: { items: true },
     });
   }
-  
 
   async createOrder(userId: string, items: { productId: string; quantity: number; price: number }[]) {
     if (!userId) {
       throw new Error('El userId es requerido para crear la orden');
     }
-  
+
     return this.prisma.order.create({
       data: {
         userId,
@@ -33,15 +32,17 @@ export class OrdersService {
       },
     });
   }
-  
 
+  // ✅ Listar pedidos por usuario
   async listOrders(userId: string): Promise<Order[]> {
     return this.prisma.order.findMany({
       where: { userId },
+      include: { items: true },
     });
   }
 
-  async updateOrderStatus(orderId: string, status: string): Promise<Order> {
+  // ✅ Actualizar estado del pedido
+  async updateOrderStatus(orderId: string, status: 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADO'): Promise<Order> {
     return this.prisma.order.update({
       where: { id: orderId },
       data: { status },

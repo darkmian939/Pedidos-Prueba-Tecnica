@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, BadRequestException } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { BadRequestException } from '@nestjs/common';
-
 
 @Controller('orders')
 export class OrdersController {
@@ -18,7 +16,24 @@ export class OrdersController {
   @Get(':id')
   getOrderById(@Param('id') id: string) {
     return this.ordersService.getOrderById(id);
-  }  
-}
+  }
 
-export default OrdersController;
+  @Patch(':id/status')
+  async updateOrderStatus(
+    @Param('id') orderId: string,
+    @Body() body: { status?: string }
+  ) {
+    if (!body || !body.status) {
+      throw new BadRequestException('El campo "status" es requerido');
+    }
+
+    const validStatuses = ['PENDIENTE', 'EN_PROCESO', 'COMPLETADO'];
+    const statusUpper = body.status.toUpperCase();
+
+    if (!validStatuses.includes(statusUpper)) {
+      throw new BadRequestException(`El estado "${body.status}" no es válido`);
+    }
+
+    return this.ordersService.updateOrderStatus(orderId, statusUpper as 'PENDIENTE' | 'EN_PROCESO' | 'COMPLETADO');
+  }
+}

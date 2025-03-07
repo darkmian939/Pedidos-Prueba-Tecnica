@@ -1,24 +1,23 @@
 import { Controller, Post, Get, Body } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { UsersService } from './users.service';
 
-@Controller('users') 
+@Controller('users')
 export class UsersController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   async createUser(@Body() data: { name: string; email: string; password: string }) {
-    console.log("Datos recibidos:", data); 
+    console.log("Datos recibidos:", data);
+
     if (!data.name || !data.email || !data.password) {
       throw new Error("Todos los campos (name, email, password) son obligatorios.");
     }
 
-    return this.prisma.user.create({
-      data,
-    });
+    return this.usersService.createUser(data.name, data.email, data.password);
   }
 
   @Get()
   async getUsers() {
-    return this.prisma.user.findMany();
+    return this.usersService.getAllUsers();
   }
 }
